@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Watermark Generator</title>
+    <!-- Import Abhaya Libre font -->
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #f4f4f9;
+            --text-color: #333;
+            --accent-color: #2563eb;
+            --card-bg: #ffffff;
+            --border-color: #e5e7eb;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        h1 { margin-top: 0; font-size: 1.5rem; }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .action-bar {
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+
+        button.primary-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        button.primary-btn:hover { background-color: #1d4ed8; }
+
+        .preview-area {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            background: #fafafa;
+            text-align: center;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr !important;
+                gap: 15px;
+            }
+            .form-grid > div[style*="grid-column: span 2"] {
+                grid-column: span 1 !important;
+            }
+            .settings-row {
+                flex-direction: column;
+            }
+            .settings-row > input {
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="card">
+            <h1>Image Watermark Generator</h1>
+            <p style="color:#666; font-size:0.95rem; margin-bottom: 25px;">
+                Add a text watermark to your images entirely in your browser. No server uploads, 100% private.
+            </p>
+
+            <!-- Controls -->
+            <div class="form-grid">
+                <div style="grid-column: span 2;">
+                    <label>1. Upload Image:</label>
+                    <input type="file" id="wmImageUpload" accept="image/png, image/jpeg, image/webp">
+                </div>
+
+                <div style="grid-column: span 2;">
+                    <label>2. Watermark Text:</label>
+                    <!-- EDIT VALUE HERE TO CHANGE DEFAULT TEXT -->
+                    <input type="text" id="wmText" value="© 2026 My Website">
+                </div>
+
+                <div>
+                    <label>Font Family:</label>
+                    <select id="wmFont">
+                        <option value="'Abhaya Libre', serif" selected>Abhaya Libre (Default)</option>
+                        <option value="Arial">Arial</option>
+                        <option value="'Times New Roman', Times, serif">Times New Roman</option>
+                        <option value="'Courier New', Courier, monospace">Courier New</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Color:</label>
+                    <!-- EDIT VALUE HERE TO CHANGE DEFAULT COLOR -->
+                    <input type="color" id="wmColor" value="#ffffff" style="height: 42px; padding: 2px;">
+                </div>
+
+                <div>
+                    <label>Position:</label>
+                    <select id="wmPosition">
+                        <option value="bottom-right">Bottom-Right</option>
+                        <option value="bottom-left">Bottom-Left</option>
+                        <option value="top-right">Top-Right</option>
+                        <option value="top-left">Top-Left</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Settings (Size pt | Margin X | Margin Y):</label>
+                    <div class="settings-row" style="display: flex; gap: 10px;">
+                        <!-- EDIT VALUES HERE TO CHANGE DEFAULT SIZE AND MARGINS -->
+                        <input type="number" id="wmSize" value="24" step="1" title="Absolute Font Size (pt)" style="width: 33%;">
+                        <input type="number" id="wmMarginX" value="20" step="1" title="Margin X (Left/Right px)" style="width: 33%;">
+                        <input type="number" id="wmMarginY" value="20" step="1" title="Margin Y (Top/Bottom px)" style="width: 33%;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <button class="primary-btn" onclick="downloadWatermark()">Download Watermarked Image</button>
+            </div>
+
+            <label>Live Preview:</label>
+            <div class="preview-area">
+                <canvas id="wmCanvas" style="max-width: 100%; height: auto; display: none;"></canvas>
+                <p id="wmPlaceholder" style="color: #999; margin: 50px 0;">Upload an image to see preview.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let wmImageObj = null;
+
+        // Event Listeners for auto-update
+        document.getElementById('wmImageUpload').addEventListener('change', handleImageUpload);
+        const wmInputs = ['wmText', 'wmFont', 'wmColor', 'wmPosition', 'wmSize', 'wmMarginX', 'wmMarginY'];
+        wmInputs.forEach(id => {
+            document.getElementById(id).addEventListener('input', drawWatermark);
+            document.getElementById(id).addEventListener('change', drawWatermark);
+        });
+
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    wmImageObj = img;
+                    document.getElementById('wmPlaceholder').style.display = 'none';
+                    document.getElementById('wmCanvas').style.display = 'inline-block';
+                    
+                    // Wait slightly for Abhaya Libre font to be ready
+                    document.fonts.ready.then(() => {
+                        drawWatermark();
+                    });
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function drawWatermark() {
+            if (!wmImageObj) return;
+
+            const canvas = document.getElementById('wmCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Match canvas size to original image
+            canvas.width = wmImageObj.width;
+            canvas.height = wmImageObj.height;
+
+            // Draw original image
+            ctx.drawImage(wmImageObj, 0, 0);
+
+            // Get Settings
+            const text = document.getElementById('wmText').value;
+            const font = document.getElementById('wmFont').value;
+            const color = document.getElementById('wmColor').value;
+            const pos = document.getElementById('wmPosition').value;
+            
+            // Use absolute font size and margins
+            const fontSize = parseFloat(document.getElementById('wmSize').value) || 24; // Default to 24pt
+            const marginX = parseInt(document.getElementById('wmMarginX').value) || 0;
+            const marginY = parseInt(document.getElementById('wmMarginY').value) || 0;
+
+            // Configure text style
+            ctx.font = `bold ${fontSize}pt ${font}`;
+            ctx.fillStyle = color;
+            
+            // Add shadow for contrast
+            ctx.shadowColor = "rgba(0, 0, 0, 0.6)";
+            ctx.shadowBlur = fontSize * 0.3;
+            ctx.shadowOffsetX = fontSize * 0.1;
+            ctx.shadowOffsetY = fontSize * 0.1;
+
+            // Calculate Coordinates
+            let x, y;
+
+            if (pos.includes('right')) {
+                ctx.textAlign = 'right';
+                x = canvas.width - marginX;
+            } else {
+                ctx.textAlign = 'left';
+                x = marginX;
+            }
+
+            if (pos.includes('bottom')) {
+                ctx.textBaseline = 'bottom';
+                y = canvas.height - marginY;
+            } else {
+                ctx.textBaseline = 'top';
+                y = marginY;
+            }
+
+            // Draw Text
+            ctx.fillText(text, x, y);
+        }
+
+        function downloadWatermark() {
+            if (!wmImageObj) {
+                alert("Please upload an image first.");
+                return;
+            }
+            
+            const canvas = document.getElementById('wmCanvas');
+            const link = document.createElement('a');
+            
+            // Generate filename based on current timestamp
+            const timestamp = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
+            link.download = `watermarked_${timestamp}.png`;
+            
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+    </script>
+</body>
+</html>
