@@ -34,6 +34,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             padding: 30px;
+            position: relative;
         }
 
         h1 { margin-top: 0; font-size: 1.5rem; }
@@ -106,12 +107,41 @@
                 width: 100% !important;
             }
         }
+        
+        /* GitHub Icon Styling */
+        .github-link {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            color: #9ca3af; /* 預設淡灰色，唔會太搶眼 */
+            transition: color 0.2s ease;
+        }
+        
+        .github-link:hover {
+            color: var(--accent-color, #2563eb); /* 滑鼠游標移過去會變藍色 */
+        }
+        
+        .github-link svg {
+            width: 28px;
+            height: 28px;
+            fill: currentColor;
+        }
+        
+        /* 防撞設計：確保標題唔會掂到個 Icon */
+        h1 {
+            padding-right: 40px;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <div class="card">
+            <a href="https://github.com/YOUR_USERNAME/YOUR_REPO" target="_blank" class="github-link" title="View source on GitHub">
+                <svg viewBox="0 0 16 16" aria-hidden="true">
+                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
             <h1>Image Watermark Generator</h1>
             <p style="color:#666; font-size:0.95rem; margin-bottom: 25px;">
                 Add a text watermark to your images entirely in your browser. No server uploads, 100% private.
@@ -127,7 +157,7 @@
                 <div style="grid-column: span 2;">
                     <label>2. Watermark Text:</label>
                     <!-- EDIT VALUE HERE TO CHANGE DEFAULT TEXT -->
-                    <input type="text" id="wmText" value="© 2026 My Website">
+                    <input type="text" id="wmText" value="sparktsang.github.io">
                 </div>
 
                 <div>
@@ -150,7 +180,7 @@
                     <label>Position:</label>
                     <select id="wmPosition">
                         <option value="bottom-right">Bottom-Right</option>
-                        <option value="bottom-left">Bottom-Left</option>
+                        <option value="bottom-left" selected>Bottom-Left</option>
                         <option value="top-right">Top-Right</option>
                         <option value="top-left">Top-Left</option>
                     </select>
@@ -160,9 +190,9 @@
                     <label>Settings (Size pt | Margin X | Margin Y):</label>
                     <div class="settings-row" style="display: flex; gap: 10px;">
                         <!-- EDIT VALUES HERE TO CHANGE DEFAULT SIZE AND MARGINS -->
-                        <input type="number" id="wmSize" value="24" step="1" title="Absolute Font Size (pt)" style="width: 33%;">
+                        <input type="number" id="wmSize" value="18" step="1" title="Absolute Font Size (pt)" style="width: 33%;">
                         <input type="number" id="wmMarginX" value="20" step="1" title="Margin X (Left/Right px)" style="width: 33%;">
-                        <input type="number" id="wmMarginY" value="20" step="1" title="Margin Y (Top/Bottom px)" style="width: 33%;">
+                        <input type="number" id="wmMarginY" value="6" step="1" title="Margin Y (Top/Bottom px)" style="width: 33%;">
                     </div>
                 </div>
             </div>
