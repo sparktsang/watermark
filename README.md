@@ -44,8 +44,8 @@ Because this tool is built for *your* personal workflow, you can easily change t
 
 Simply open `index.html` in any text editor and modify the `value="..."` attributes in the HTML:
 
-*   **Default Text:** Find `<input type="text" id="wmText" value="© 2026 My Website">` and change it to your actual name or website.
-*   **Default Size:** Find `<input type="number" id="wmSize" value="24"` and increase it (e.g., to `60`) if you primarily work with very high-resolution photography.
+*   **Default Text:** Find `<input type="text" id="wmText" value="sparktsang.github.io">` and change it to your actual name or website.
+*   **Default Size:** Find `<input type="number" id="wmSize" value="18"` and increase it (e.g., to `60`) if you primarily work with very high-resolution photography.
 *   **Default Color:** Find `<input type="color" id="wmColor" value="#ffffff">` and change the hex code.
 
 ---
