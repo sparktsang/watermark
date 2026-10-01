@@ -2,8 +2,7 @@
 
 A lightning-fast, client-side web application for stamping text watermarks onto your images. Built with pure HTML5 Canvas and JavaScript—no servers, no uploads, and 100% privacy.
 
-**[👉 Click here to use the App](https://your-username.github.io/image-watermark-tool/)**  
-*(Replace the link above after you enable GitHub Pages)*
+**[👉 Click here to use the App](https://sparktsang.github.io/watermark/)**  
 
 ---
 
